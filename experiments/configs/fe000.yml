@@ -1,0 +1,42 @@
+fe_name: 'fe000'
+data:
+  train: '../input/train_co.csv'
+  test: '../input/test_co.csv'
+  output_dir: '../input'
+cols_definition:
+  id_col: 'spectrum_id'
+  target_col: 'target'
+  numerical_col: [
+    'layout_x',
+    'layout_y',
+    'pos_x',
+    'params0',
+    'params1',
+    'params2',
+    'params3',
+    'params4',
+    'params5',
+    'params6',
+    'rms',
+    'beta'
+  ]
+  categorical_col: [
+    'chip_id',
+    'exc_wl',
+    'layout_a'
+  ]
+  delete_col: [
+    'spectrum_id',
+    'spectrum_filename'
+  ]
+preprocessing:
+  label_encoding: categorical_col
+  frequency_encoding: categorical_col
+  count_encoding: categorical_col
+  count_encoding_interact: categorical_col
+  matrix_factorization: [
+    'chip_id',
+    'exc_wl',
+    'layout_a'
+  ]
+  numeric_interact: numerical_col

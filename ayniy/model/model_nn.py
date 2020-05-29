@@ -4,7 +4,7 @@ from keras import backend as K
 from keras.callbacks import EarlyStopping, Callback, ModelCheckpoint
 from keras.layers.advanced_activations import PReLU
 from keras.layers.core import Dense, Dropout, Reshape
-from keras.layers import Input, Embedding, Flatten, concatenate, Multiply, Conv1D, MaxPooling1D
+from keras.layers import Input, Embedding, Flatten, concatenate, Multiply, Conv1D, MaxPooling1D, GlobalMaxPool1D
 from keras.layers.normalization import BatchNormalization
 from keras.models import load_model
 from keras.models import Model as kerasModel
@@ -23,12 +23,13 @@ def rmse(y, y_pred):
     return K.sqrt(K.mean(K.square(y - y_pred)))
 
 
-def get_keras_data(df, numerical_features, categorical_features):
+def get_keras_data(df, numerical_features, categorical_features, audio_features):
     X = {
         "numerical": df[numerical_features].values
     }
     for c in categorical_features:
         X[c] = df[c]
+    X["audio"] = df[audio_features].values
     return X
 
 
@@ -278,12 +279,13 @@ class ModelTNNClassifier(oriModel):
         self.model = load_model(model_path)
 
 
-class ModelCNN(oriModel):
+class ModelCNNClasifier(oriModel):
 
     def train(self, tr_x, tr_y, va_x=None, va_y=None, te_x=None):
+        audio_features = [c for c in tr_x.columns if "spec" in c]
 
         # データのセット・スケーリング
-        numerical_features = [c for c in tr_x.columns if c not in self.categorical_features]
+        numerical_features = [c for c in tr_x.columns if (c not in self.categorical_features) and (c not in audio_features)]
         validation = va_x is not None
 
         # パラメータ
@@ -300,38 +302,38 @@ class ModelCNN(oriModel):
             inp_cat = Input(shape=[1], name=c)
             inp_cats.append(inp_cat)
             embs.append((Embedding(data[c].max() + 1, 4)(inp_cat)))
-        cats = Conv1D(filters=64, kernel_size=1, strides=1, activation='relu')(concatenate(embs))
+        cats = Flatten()(concatenate(embs))
+        cats = Dense(4, activation="linear")(cats)
         cats = BatchNormalization()(cats)
         cats = PReLU()(cats)
 
         inp_numerical = Input(shape=[len(numerical_features)], name="numerical")
-        nums = Reshape((1, len(numerical_features)), input_shape=[len(numerical_features)])(inp_numerical)
-        nums = Conv1D(filters=64, kernel_size=1, strides=1, activation='relu')(nums)
+        nums = Dense(32, activation="linear")(inp_numerical)
         nums = BatchNormalization()(nums)
         nums = PReLU()(nums)
         nums = Dropout(dropout)(nums)
 
-        x = concatenate([nums, cats])
+        inp_audio = Input(shape=[512], name="audio")
+        audio = Reshape((1, 512))(inp_audio)
+        audio = Conv1D(filters=64, kernel_size=1, strides=3, activation='relu')(audio)
+        audio = Dropout(dropout)(audio)
+        audio = GlobalMaxPool1D()(audio)
+
+        x = concatenate([nums, cats, audio])
+        # x = se_block(x, 32 + 4 + 64)
         x = BatchNormalization()(x)
-        x = PReLU()(x)
-        x = MaxPooling1D(pool_size=1)(x)
-        x = Conv1D(filters=64, kernel_size=1, strides=1, activation='relu')(x)
-        x = BatchNormalization()(x)
-        x = PReLU()(x)
-        x = MaxPooling1D(pool_size=1)(x)
-        x = Dropout(dropout)(x)
-        x = Flatten()(x)
+        x = Dropout(dropout / 2)(x)
         out = Dense(1, activation="sigmoid", name="out1")(x)
 
-        model = kerasModel(inputs=inp_cats + [inp_numerical], outputs=out)
+        model = kerasModel(inputs=inp_cats + [inp_numerical] + [inp_audio], outputs=out)
         model.compile(loss='binary_crossentropy', optimizer='adam')
 
         # print(model.summary())
         n_train = len(tr_x)
         batch_size_nn = 256
 
-        tr_x = get_keras_data(tr_x, numerical_features, self.categorical_features)
-        va_x = get_keras_data(va_x, numerical_features, self.categorical_features)
+        tr_x = get_keras_data(tr_x, numerical_features, self.categorical_features, audio_features)
+        va_x = get_keras_data(va_x, numerical_features, self.categorical_features, audio_features)
 
         clr_tri = CyclicLR(base_lr=1e-5, max_lr=1e-2, step_size=n_train // batch_size_nn, mode="triangular2")
         ckpt = ModelCheckpoint(f'../output/model/model_{self.run_fold_name}.hdf5', save_best_only=True,
@@ -349,8 +351,9 @@ class ModelCNN(oriModel):
         self.model = model
 
     def predict(self, te_x):
-        numerical_features = [c for c in te_x.columns if c not in self.categorical_features]
-        te_x = get_keras_data(te_x, numerical_features, self.categorical_features)
+        audio_features = [c for c in te_x.columns if "spec" in c]
+        numerical_features = [c for c in te_x.columns if (c not in self.categorical_features) and (c not in audio_features)]
+        te_x = get_keras_data(te_x, numerical_features, self.categorical_features, audio_features)
         pred = self.model.predict(te_x)
         return pred
 
