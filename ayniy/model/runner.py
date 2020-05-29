@@ -6,7 +6,7 @@ from mlflow import log_metric, log_param, log_artifact
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from sklearn.metrics import log_loss, mean_absolute_error, roc_auc_score, mean_squared_error
+from sklearn.metrics import log_loss, mean_absolute_error, roc_auc_score, mean_squared_error, average_precision_score
 
 from ayniy.model.model import Model
 from ayniy.utils import Logger, Data
@@ -118,6 +118,8 @@ class Runner:
             score = np.sqrt(mean_squared_error(y_val, pred_val))
         elif self.evaluation_metric == 'auc':
             score = roc_auc_score(y_val, pred_val)
+        elif self.evaluation_metric == 'prauc':
+            score = average_precision_score(y_val, pred_val)
 
         # モデル、インデックス、予測値、評価を返す
         return model, va_idx, pred_val, score
@@ -178,6 +180,8 @@ class Runner:
             cv_score = np.sqrt(mean_squared_error(self.y_train, preds))
         elif self.evaluation_metric == 'auc':
             cv_score = roc_auc_score(self.y_train, preds)
+        elif self.evaluation_metric == 'prauc':
+            cv_score = average_precision_score(self.y_train, preds)
 
         logger.info(f'{self.run_name} - end training cv - score {cv_score}')
 
