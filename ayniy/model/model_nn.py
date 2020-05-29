@@ -4,12 +4,13 @@ from keras import backend as K
 from keras.callbacks import EarlyStopping, Callback, ModelCheckpoint
 from keras.layers.advanced_activations import PReLU
 from keras.layers.core import Dense, Dropout, Reshape
-from keras.layers import Input, Embedding, Flatten, concatenate, Multiply, Conv1D, MaxPooling1D, GlobalMaxPool1D
+from keras.layers import Input, Embedding, Flatten, concatenate, Multiply, Conv1D, GlobalMaxPool1D
 from keras.layers.normalization import BatchNormalization
 from keras.models import load_model
 from keras.models import Model as kerasModel
 import numpy as np
 import pandas as pd
+from sklearn.metrics import average_precision_score
 import tensorflow as tf
 
 from ayniy.model.model import Model as oriModel
@@ -21,6 +22,10 @@ tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 def rmse(y, y_pred):
     return K.sqrt(K.mean(K.square(y - y_pred)))
+
+
+def prauc(y, y_pred):
+    return tf.py_func(average_precision_score, (y, y_pred), tf.double)
 
 
 def get_keras_data(df, numerical_features, categorical_features, audio_features):
@@ -326,7 +331,7 @@ class ModelCNNClasifier(oriModel):
         out = Dense(1, activation="sigmoid", name="out1")(x)
 
         model = kerasModel(inputs=inp_cats + [inp_numerical] + [inp_audio], outputs=out)
-        model.compile(loss='binary_crossentropy', optimizer='adam')
+        model.compile(loss='binary_crossentropy', optimizer='adam', metrics=[prauc])
 
         # print(model.summary())
         n_train = len(tr_x)
@@ -364,4 +369,4 @@ class ModelCNNClasifier(oriModel):
 
     def load_model(self):
         model_path = os.path.join('../output/model', f'{self.run_fold_name}.h5')
-        self.model = load_model(model_path)
+        self.model = load_model(model_path, custom_objects={'prauc': prauc})
