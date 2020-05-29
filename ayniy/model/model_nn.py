@@ -308,7 +308,7 @@ class ModelCNNClasifier(oriModel):
             inp_cats.append(inp_cat)
             embs.append((Embedding(data[c].max() + 1, 4)(inp_cat)))
         cats = Flatten()(concatenate(embs))
-        cats = Dense(4, activation="linear")(cats)
+        cats = Dense(10, activation="linear")(cats)
         cats = BatchNormalization()(cats)
         cats = PReLU()(cats)
 
@@ -320,12 +320,12 @@ class ModelCNNClasifier(oriModel):
 
         inp_audio = Input(shape=[512], name="audio")
         audio = Reshape((1, 512))(inp_audio)
-        audio = Conv1D(filters=64, kernel_size=1, strides=3, activation='relu')(audio)
-        audio = Dropout(dropout)(audio)
+        audio = Conv1D(filters=300, kernel_size=1, strides=9, activation='relu')(audio)
+        audio = Conv1D(filters=64, kernel_size=1, strides=4, activation='relu')(audio)
         audio = GlobalMaxPool1D()(audio)
+        audio = Dropout(dropout)(audio)
 
         x = concatenate([nums, cats, audio])
-        # x = se_block(x, 32 + 4 + 64)
         x = BatchNormalization()(x)
         x = Dropout(dropout / 2)(x)
         out = Dense(1, activation="sigmoid", name="out1")(x)
