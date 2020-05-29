@@ -11,6 +11,7 @@
 *.npy
 .vector_cache
 mlruns
+input/spectrum_raw
 experiments/dev.ipynb
 
 # Created by https://www.gitignore.io/api/macos,images,python,jupyternotebooks
