@@ -1,7 +1,7 @@
 fe_name: 'fe000'
 data:
-  train: '../input/train_co.csv'
-  test: '../input/test_co.csv'
+  train: '../input/train_fitting_ef.csv'
+  test: '../input/test_fitting_ef.csv'
   output_dir: '../input'
 cols_definition:
   id_col: 'spectrum_id'
