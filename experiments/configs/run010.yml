@@ -1,0 +1,41 @@
+description: catboost
+exp_name: 'atma-comp5'
+run_name: 'run010'
+fe_name: 'fe003'
+data:
+  sample_submission: '../input/atmaCup5__sample_submission.csv'
+cols_definition:
+  id_col: 'spectrum_id'
+  target_col: 'target'
+  numerical_col: [
+    'layout_x',
+    'layout_y',
+    'pos_x',
+    'params0',
+    'params1',
+    'params2',
+    'params3',
+    'params4',
+    'params5',
+    'params6',
+    'rms',
+    'beta'
+  ]
+  categorical_col: [
+    'chip_id',
+    'exc_wl',
+    'layout_a'
+  ]
+model_name: 'ModelCatClassifier'
+params: {
+  'depth': 6,
+  'learning_rate': 0.04,
+  'iterations': 10000,
+  'loss_function': 'Logloss',
+  'eval_metric': 'AUC',
+  'random_seed': 777,
+  'allow_writing_files': False,
+  'task_type': "CPU",
+  'early_stopping_rounds': 50
+}
+evaluation_metric: 'prauc'
