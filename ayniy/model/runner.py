@@ -274,9 +274,9 @@ class Runner:
         # 学習データ・バリデーションデータを分けるインデックスを返す
         # ここでは乱数を固定して毎回作成しているが、ファイルに保存する方法もある
         if 'cv_y' in self.cols_definition:
-            return list(self.cv.split(self.X_train, self.X_train[self.cols_definition['cv_y']], groups=self.X_train['chip_id']))[i_fold]
+            return list(self.cv.split(self.X_train, self.X_train[self.cols_definition['cv_y']]))[i_fold]
         else:
-            return list(self.cv.split(self.X_train, self.y_train, groups=self.X_train['chip_id']))[i_fold]
+            return list(self.cv.split(self.X_train, self.y_train))[i_fold]
 
     def submission(self):
         pred = Data.load(f'../output/pred/{self.run_name}-test.pkl')
