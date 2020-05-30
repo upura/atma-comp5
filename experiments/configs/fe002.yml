@@ -1,0 +1,63 @@
+fe_name: 'fe002'
+data:
+  train: '../input/train_fitting_ef.csv'
+  test: '../input/test_fitting_ef.csv'
+  output_dir: '../input'
+cols_definition:
+  id_col: 'spectrum_id'
+  target_col: 'target'
+  numerical_col: [
+    'layout_x',
+    'layout_y',
+    'pos_x',
+    'params0',
+    'params1',
+    'params2',
+    'params3',
+    'params4',
+    'params5',
+    'params6',
+    'rms',
+    'beta'
+  ]
+  categorical_col: [
+    'chip_id',
+    'exc_wl',
+    'layout_a'
+  ]
+  delete_col: [
+    'spectrum_id',
+    'spectrum_filename'
+  ]
+preprocessing:
+  label_encoding: categorical_col
+  frequency_encoding: categorical_col
+  count_encoding: categorical_col
+  count_encoding_interact: categorical_col
+  matrix_factorization: [
+    'chip_id',
+    'exc_wl',
+    'layout_a'
+  ]
+  aggregation:
+    groupby_dict: [
+      {
+        'key': [
+          'chip_id',
+          'exc_wl',
+          'layout_a'
+        ],
+        'var': ['value__ar_coefficient__k_10__coeff_2',
+                'value__change_quantiles__f_agg_"var"__isabs_True__qh_1.0__ql_0.8',
+                'value__change_quantiles__f_agg_"var"__isabs_True__qh_1.0__ql_0.6'],
+        'agg': ['mean', 'sum', 'median', 'min', 'max', 'var', 'std']
+      },
+    ]
+    nunique_dict: [
+      {
+        'key': ['chip_id'],
+        'var': ['exc_wl', 'layout_a'],
+        'agg': ['nunique']
+      },
+    ]
+  numeric_interact: numerical_col
