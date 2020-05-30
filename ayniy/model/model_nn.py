@@ -2,7 +2,7 @@ import os
 
 from keras import backend as K
 from keras.callbacks import EarlyStopping, Callback, ModelCheckpoint
-from keras.layers.advanced_activations import PReLU
+from keras.layers.advanced_activations import PReLU, LeakyReLU
 from keras.layers.core import Dense, Dropout, Reshape
 from keras.layers import Input, Embedding, Flatten, concatenate, Multiply, Conv1D, GlobalMaxPool1D
 from keras.layers.normalization import BatchNormalization
@@ -318,10 +318,20 @@ class ModelCNNClasifier(oriModel):
         nums = PReLU()(nums)
         nums = Dropout(dropout)(nums)
 
+        # https://www.kaggle.com/yuval6967/3rd-place-cnn
         inp_audio = Input(shape=[512], name="audio")
-        audio = Reshape((1, 512))(inp_audio)
-        audio = Conv1D(filters=300, kernel_size=1, strides=9, activation='relu')(audio)
-        audio = Conv1D(filters=64, kernel_size=1, strides=4, activation='relu')(audio)
+        audio = Reshape((512, 1))(inp_audio)
+        audio = Conv1D(256, 8, padding='same', activation='relu', name='Conv1')(audio)
+        # audio = BatchNormalization()(audio)
+        # audio = LeakyReLU(alpha=0.1)(audio)
+        # audio = Dropout(0.2)(audio)
+        # audio = Conv1D(256, 5, padding='same', name='Conv2')(audio)
+        # audio = BatchNormalization()(audio)
+        # audio = LeakyReLU(alpha=0.1)(audio)
+        # audio = Dropout(0.2)(audio)
+        # audio = Conv1D(256, 3, padding='same', name='Conv3')(audio)
+        # audio = BatchNormalization()(audio)
+        # audio = LeakyReLU(alpha=0.1)(audio)
         audio = GlobalMaxPool1D()(audio)
         audio = Dropout(dropout)(audio)
 
