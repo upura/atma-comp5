@@ -5,7 +5,7 @@ python runner.py --fe configs/fe000.yml --run configs/run000.yml
 import yaml
 import argparse
 
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import GroupKFold
 
 from ayniy.preprocessing.runner import Tabular
 from ayniy.model.runner import Runner
@@ -16,7 +16,7 @@ parser.add_argument('--fe')
 parser.add_argument('--run')
 args = parser.parse_args()
 
-cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=7)
+cv = GroupKFold(n_splits=6)
 
 if args.fe:
     f = open(args.fe, 'r+')
