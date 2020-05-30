@@ -6,9 +6,16 @@ import numpy as np
 import optuna.integration.lightgbm as optuna_lgb
 import pandas as pd
 from scipy.misc import derivative
+from sklearn.metrics import average_precision_score
 
 from ayniy.model.model import Model
 from ayniy.utils import Data
+
+
+def pr_auc(preds, data):
+    y_true = data.get_label()
+    score = average_precision_score(y_true, preds)
+    return "pr_auc", score, True
 
 
 class ModelLGBM(Model):
@@ -32,13 +39,15 @@ class ModelLGBM(Model):
                 params, lgb_train, num_round,
                 valid_sets=[lgb_train, lgb_eval],
                 verbose_eval=500,
-                early_stopping_rounds=early_stopping_rounds
+                early_stopping_rounds=early_stopping_rounds,
+                feval=pr_auc
             )
         else:
             self.model = lgb.train(
                 params, lgb_train, num_round,
                 valid_sets=[lgb_train],
-                verbose_eval=500
+                verbose_eval=500,
+                feval=pr_auc
             )
 
     def predict(self, te_x):
