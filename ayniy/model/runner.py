@@ -11,7 +11,7 @@ from sklearn.metrics import log_loss, mean_absolute_error, roc_auc_score, mean_s
 from ayniy.model.model import Model
 from ayniy.utils import Logger, Data
 from ayniy.model import (ModelLGBM, ModelOptunaLGBM, ModelFocalLGBM,
-                         ModelCatRegressor,
+                         ModelCatRegressor, ModelCatClassifier,
                          ModelXGB,
                          ModelNgbClassifier, ModelNgbRegressor,
                          ModelTNNClassifier, ModelTNNRegressor, ModelCNNClasifier,
@@ -24,6 +24,7 @@ models_map = {
     'ModelOptunaLGBM': ModelOptunaLGBM,
     'ModelFocalLGBM': ModelFocalLGBM,
     'ModelCatRegressor': ModelCatRegressor,
+    'ModelCatClassifier': ModelCatClassifier,
     'ModelXGB': ModelXGB,
     'ModelNgbClassifier': ModelNgbClassifier,
     'ModelNgbRegressor': ModelNgbRegressor,
