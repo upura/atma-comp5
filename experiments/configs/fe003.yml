@@ -1,4 +1,4 @@
-fe_name: 'fe002'
+fe_name: 'fe003'
 data:
   train: '../input/train_fitting_ef.csv'
   test: '../input/test_fitting_ef.csv'
