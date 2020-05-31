@@ -132,6 +132,7 @@ class Tabular:
                 {'encode_col': unique_cols + duplicated_cols + high_corr_cols + self.cols_definition['delete_col']})
 
         with timer('save'):
+            print('train.shape: ', self.train.shape)
             save_as_pickle(self.train, self.test,
                            {'target_col': self.cols_definition['target_col']},
                            {'exp_id': self.run_name, 'output_dir': self.output_dir})
