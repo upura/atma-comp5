@@ -1,0 +1,34 @@
+description: Ridge stacking
+exp_name: 'atma-comp5'
+run_name: 'run031'
+fe_name: 'stack001'
+data:
+  sample_submission: '../input/atmaCup5__sample_submission.csv'
+cols_definition:
+  id_col: 'spectrum_id'
+  target_col: 'target'
+  numerical_col: [
+    'layout_x',
+    'layout_y',
+    'pos_x',
+    'params0',
+    'params1',
+    'params2',
+    'params3',
+    'params4',
+    'params5',
+    'params6',
+    'rms',
+    'beta'
+  ]
+  categorical_col: [
+    'chip_id',
+    'exc_wl',
+    'layout_a'
+  ]
+model_name: 'ModelRIDGE'
+params: {
+  'alpha': 100,
+  'random_state': 0
+}
+evaluation_metric: 'prauc'
