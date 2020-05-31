@@ -35,6 +35,8 @@ Logloss works better than PR-AUC as a eval metric
 
 - CNN
     - [Kaggle "PLAsTiCC Astronomical Classification" 3rd place](https://www.kaggle.com/yuval6967/3rd-place-cnn)
+- RNN
+    - [Kaggle "PLAsTiCC Astronomical Classification" 2nd place](https://www.kaggle.com/zerrxy/plasticc-rnn)
 
 ## Ensemble
 
