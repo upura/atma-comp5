@@ -20,13 +20,13 @@ def load_pred_from_run_id(run_id: str):
 
 
 run_ids = [
-    # 'run015',
+    'run015',
     'run023',
     'run022',
     'run035',
     'run036',
 ]
-fe_name = 'stack003'
+fe_name = 'stack004'
 
 y_train = pd.read_csv('../input/train.csv')['target']
 oofs = [load_oof_from_run_id(ri) for ri in run_ids]
