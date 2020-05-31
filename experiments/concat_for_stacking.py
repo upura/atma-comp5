@@ -40,4 +40,5 @@ X_train.columns = run_ids
 X_test.columns = run_ids
 
 Data.dump(X_train, f'../input/X_train_{fe_name}.pkl')
+Data.dump(y_train, f'../input/y_train_{fe_name}.pkl')
 Data.dump(X_test, f'../input/X_test_{fe_name}.pkl')
