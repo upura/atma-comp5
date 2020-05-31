@@ -369,7 +369,7 @@ class ModelCNNClasifier(oriModel):
         audio_features = [c for c in te_x.columns if "spec" in c]
         numerical_features = [c for c in te_x.columns if (c not in self.categorical_features) and (c not in audio_features)]
         te_x = get_keras_data(te_x, numerical_features, self.categorical_features, audio_features)
-        pred = self.model.predict(te_x)
+        pred = self.model.predict(te_x).reshape(-1, )
         return pred
 
     def save_model(self):
