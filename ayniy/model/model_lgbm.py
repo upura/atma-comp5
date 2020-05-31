@@ -40,14 +40,14 @@ class ModelLGBM(Model):
                 valid_sets=[lgb_train, lgb_eval],
                 verbose_eval=500,
                 early_stopping_rounds=early_stopping_rounds,
-                feval=pr_auc
+                # feval=pr_auc
             )
         else:
             self.model = lgb.train(
                 params, lgb_train, num_round,
                 valid_sets=[lgb_train],
                 verbose_eval=500,
-                feval=pr_auc
+                # feval=pr_auc
             )
 
     def predict(self, te_x):
