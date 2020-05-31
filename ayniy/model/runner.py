@@ -14,7 +14,7 @@ from ayniy.model import (ModelLGBM, ModelOptunaLGBM, ModelFocalLGBM,
                          ModelCatRegressor, ModelCatClassifier,
                          ModelXGB,
                          ModelNgbClassifier, ModelNgbRegressor,
-                         ModelTNNClassifier, ModelTNNRegressor, ModelCNNClasifier,
+                         ModelTNNClassifier, ModelTNNRegressor, ModelCNNClasifier, ModelRNNClasifier,
                          ModelRIDGE)
 
 
@@ -31,6 +31,7 @@ models_map = {
     'ModelTNNClassifier': ModelTNNClassifier,
     'ModelTNNRegressor': ModelTNNRegressor,
     'ModelCNNClasifier': ModelCNNClasifier,
+    'ModelRNNClasifier': ModelRNNClasifier,
     'ModelRIDGE': ModelRIDGE
 }
 

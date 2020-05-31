@@ -4,7 +4,9 @@ from keras import backend as K
 from keras.callbacks import EarlyStopping, Callback, ModelCheckpoint
 from keras.layers.advanced_activations import PReLU, LeakyReLU
 from keras.layers.core import Dense, Dropout, Reshape
-from keras.layers import Input, Embedding, Flatten, concatenate, Multiply, Conv1D, GlobalMaxPool1D
+from keras.layers import (Input, Embedding, Flatten, concatenate, Multiply,
+                          Conv1D, GlobalMaxPool1D,
+                          Bidirectional, TimeDistributed, SpatialDropout1D, GRU)
 from keras.layers.normalization import BatchNormalization
 from keras.models import load_model
 from keras.models import Model as kerasModel
@@ -332,6 +334,98 @@ class ModelCNNClasifier(oriModel):
         audio = Conv1D(256, 3, padding='same', name='Conv3')(audio)
         audio = BatchNormalization()(audio)
         audio = LeakyReLU(alpha=0.1)(audio)
+        audio = GlobalMaxPool1D()(audio)
+        audio = Dropout(dropout)(audio)
+
+        x = concatenate([nums, cats, audio])
+        x = BatchNormalization()(x)
+        x = Dropout(dropout / 2)(x)
+        out = Dense(1, activation="sigmoid", name="out1")(x)
+
+        model = kerasModel(inputs=inp_cats + [inp_numerical] + [inp_audio], outputs=out)
+        model.compile(loss='binary_crossentropy', optimizer='adam', metrics=[prauc])
+
+        # print(model.summary())
+        n_train = len(tr_x)
+        batch_size_nn = 256
+
+        tr_x = get_keras_data(tr_x, numerical_features, self.categorical_features, audio_features)
+        va_x = get_keras_data(va_x, numerical_features, self.categorical_features, audio_features)
+
+        clr_tri = CyclicLR(base_lr=1e-5, max_lr=1e-2, step_size=n_train // batch_size_nn, mode="triangular2")
+        ckpt = ModelCheckpoint(f'../output/model/model_{self.run_fold_name}.hdf5', save_best_only=True,
+                               monitor='val_loss', mode='min')
+        if validation:
+            early_stopping = EarlyStopping(monitor='val_loss', patience=patience,
+                                           verbose=1, restore_best_weights=True)
+            model.fit(tr_x, tr_y, epochs=nb_epoch, batch_size=batch_size_nn, verbose=2,
+                      validation_data=(va_x, va_y), callbacks=[ckpt, clr_tri, early_stopping])
+        else:
+            model.fit(tr_x, tr_y, nb_epoch=nb_epoch, batch_size=batch_size_nn, verbose=2)
+        model.load_weights(f'../output/model/model_{self.run_fold_name}.hdf5')
+
+        # モデル・スケーラーの保持
+        self.model = model
+
+    def predict(self, te_x):
+        audio_features = [c for c in te_x.columns if "spec" in c]
+        numerical_features = [c for c in te_x.columns if (c not in self.categorical_features) and (c not in audio_features)]
+        te_x = get_keras_data(te_x, numerical_features, self.categorical_features, audio_features)
+        pred = self.model.predict(te_x).reshape(-1, )
+        return pred
+
+    def save_model(self):
+        model_path = os.path.join('../output/model', f'{self.run_fold_name}.h5')
+        os.makedirs(os.path.dirname(model_path), exist_ok=True)
+        self.model.save(model_path)
+
+    def load_model(self):
+        model_path = os.path.join('../output/model', f'{self.run_fold_name}.h5')
+        self.model = load_model(model_path, custom_objects={'prauc': prauc})
+
+
+class ModelRNNClasifier(oriModel):
+
+    def train(self, tr_x, tr_y, va_x=None, va_y=None, te_x=None):
+        audio_features = [c for c in tr_x.columns if "spec" in c]
+
+        # データのセット・スケーリング
+        numerical_features = [c for c in tr_x.columns if (c not in self.categorical_features) and (c not in audio_features)]
+        validation = va_x is not None
+
+        # パラメータ
+        dropout = self.params['dropout']
+        nb_epoch = self.params['nb_epoch']
+        patience = self.params['patience']
+
+        # モデルの構築
+        inp_cats = []
+        embs = []
+        data = pd.concat([tr_x, va_x, te_x]).reset_index(drop=True)
+
+        for c in self.categorical_features:
+            inp_cat = Input(shape=[1], name=c)
+            inp_cats.append(inp_cat)
+            embs.append((Embedding(data[c].max() + 1, 4)(inp_cat)))
+        cats = Flatten()(concatenate(embs))
+        cats = Dense(10, activation="linear")(cats)
+        cats = BatchNormalization()(cats)
+        cats = PReLU()(cats)
+
+        inp_numerical = Input(shape=[len(numerical_features)], name="numerical")
+        nums = Dense(32, activation="linear")(inp_numerical)
+        nums = BatchNormalization()(nums)
+        nums = PReLU()(nums)
+        nums = Dropout(dropout)(nums)
+
+        # https://www.kaggle.com/zerrxy/plasticc-rnn
+        inp_audio = Input(shape=[512], name="audio")
+        audio = Reshape((512, 1))(inp_audio)
+
+        audio = TimeDistributed(Dense(40, activation='relu'))(audio)
+        audio = Bidirectional(GRU(80, return_sequences=True))(audio)
+        audio = SpatialDropout1D(0.2)(audio)
+
         audio = GlobalMaxPool1D()(audio)
         audio = Dropout(dropout)(audio)
 
