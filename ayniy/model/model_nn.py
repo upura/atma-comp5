@@ -321,7 +321,7 @@ class ModelCNNClasifier(oriModel):
         # https://www.kaggle.com/yuval6967/3rd-place-cnn
         inp_audio = Input(shape=[512], name="audio")
         audio = Reshape((512, 1))(inp_audio)
-        audio = Conv1D(256, 8, padding='same', activation='relu', name='Conv1')(audio)
+        audio = Conv1D(256, 8, padding='same', name='Conv1')(audio)
         audio = BatchNormalization()(audio)
         audio = LeakyReLU(alpha=0.1)(audio)
         audio = Dropout(0.2)(audio)
