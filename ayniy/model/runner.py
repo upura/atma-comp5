@@ -240,8 +240,9 @@ class Runner:
 
         # 特徴量の重要度
         if show_feature_importance:
-            cols = feature_importances.groupby('Feature').mean().sort_values(by="importance", ascending=False)[:200].index
-            pd.DataFrame(cols).to_csv(f'../output/importance/{self.run_name}-fi.csv')
+            aggs = feature_importances.groupby('Feature').mean().sort_values(by="importance", ascending=False)
+            cols = aggs[:200].index
+            pd.DataFrame(aggs.index).to_csv(f'../output/importance/{self.run_name}-fi.csv', index=False)
 
             best_features = feature_importances.loc[feature_importances.Feature.isin(cols)]
             plt.figure(figsize=(14, 26))
