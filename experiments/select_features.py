@@ -1,12 +1,22 @@
+"""
+cd experiments
+ython select_features.py --n 100
+"""
+import argparse
+
 import pandas as pd
 
 from ayniy.utils import Data
 
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--n')
+args = parser.parse_args()
+
 fe_id = 'fe004'
 run_id = 'run022'
-fe_name = 'fe004_top500'
-N_FEATURES = 500
+N_FEATURES = int(args.n)
+fe_name = f'fe004_top{N_FEATURES}'
 
 X_train = Data.load(f'../input/X_train_{fe_id}.pkl')
 y_train = Data.load(f'../input/y_train_{fe_id}.pkl')
