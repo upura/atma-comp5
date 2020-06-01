@@ -1,0 +1,55 @@
+fe_name: 'fe005'
+data:
+  train: '../input/train_fitting_ef.csv'
+  test: '../input/test_fitting_ef.csv'
+  output_dir: '../input'
+cols_definition:
+  id_col: 'spectrum_id'
+  target_col: 'target'
+  numerical_col: [
+    'pos_x',
+    'params0',
+    'params1',
+    'params2',
+    'params3',
+    'params4',
+    'params5',
+    'params6',
+    'rms',
+    'beta'
+  ]
+  categorical_col: [
+    'exc_wl'
+  ]
+  delete_col: [
+    'spectrum_id',
+    'spectrum_filename',
+    'layout_x',
+    'layout_y',
+    'chip_id',
+    'layout_a'
+  ]
+preprocessing:
+  label_encoding: categorical_col
+  frequency_encoding: categorical_col
+  count_encoding: categorical_col
+  aggregation:
+    groupby_dict: [
+      {
+        'key': [
+          'exc_wl'
+        ],
+        'var': ['value__ar_coefficient__k_10__coeff_2',
+                'value__change_quantiles__f_agg_"var"__isabs_True__qh_1.0__ql_0.8',
+                'value__change_quantiles__f_agg_"var"__isabs_True__qh_1.0__ql_0.6',
+                'value__partial_autocorrelation__lag_4',
+                'params2'],
+        'agg': ['mean', 'sum', 'median', 'min', 'max', 'var', 'std']
+      },
+    ]
+    nunique_dict: [
+    ]
+  target_encoding: [
+    'exc_wl',
+  ]
+  numeric_interact: numerical_col
