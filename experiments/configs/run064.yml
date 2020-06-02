@@ -1,0 +1,43 @@
+description: lgbm stacking
+exp_name: 'atma-comp5'
+run_name: 'run064'
+fe_name: 'stack005'
+data:
+  sample_submission: '../input/atmaCup5__sample_submission.csv'
+cols_definition:
+  id_col: 'spectrum_id'
+  target_col: 'target'
+  numerical_col: [
+    'layout_x',
+    'layout_y',
+    'pos_x',
+    'params0',
+    'params1',
+    'params2',
+    'params3',
+    'params4',
+    'params5',
+    'params6',
+    'rms',
+    'beta'
+  ]
+  categorical_col: [
+  ]
+model_name: 'ModelLGBM'
+params: {
+  'objective': 'binary',
+  'max_depth': 2,
+  "feature_fraction": 0.8,
+  'subsample_freq': 1,
+  "bagging_fraction": 0.7,
+  'min_data_in_leaf': 10,
+  'learning_rate': 0.1,
+  "boosting": "gbdt",
+  "lambda_l1": 4,
+  "lambda_l2": 40,
+  "verbosity": -1,
+  "random_state": 42,
+  "num_boost_round": 50000,
+  "early_stopping_rounds": 100
+}
+evaluation_metric: 'prauc'
