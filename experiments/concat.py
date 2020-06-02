@@ -1,7 +1,7 @@
 import pandas as pd
 
 from ayniy.utils import Data
-from ayniy.preprocessing import standerize
+# from ayniy.preprocessing import standerize
 
 
 # sub = pd.read_csv('../input/atmaCup5__sample_submission.csv')
@@ -15,23 +15,26 @@ from ayniy.preprocessing import standerize
 # train.to_csv('../input/train_fitting.csv', index=False)
 # test.to_csv('../input/test_fitting.csv', index=False)
 
-# ef_tr = pd.read_csv('../input/ef_tr.csv')
-# ef_te = pd.read_csv('../input/ef_te.csv')
+add_tr = pd.read_csv('../input/additional_features_train.csv')
+add_te = pd.read_csv('../input/additional_features_test.csv')
 
-fe001_tr = Data.load('../input/X_train_fe001.pkl')
-fe001_te = Data.load('../input/X_test_fe001.pkl')
-top10_tr = Data.load('../input/X_train_fe004_top10.pkl')
-top10_te = Data.load('../input/X_test_fe004_top10.pkl')
+fe005_tr = Data.load('../input/X_train_fe005.pkl')
+fe005_te = Data.load('../input/X_test_fe005.pkl')
 
-top10_tr, top10_te = standerize(top10_tr, top10_te, {'encode_col': top10_tr.columns})
-print(top10_tr.head())
+# fe001_tr = Data.load('../input/X_train_fe001.pkl')
+# fe001_te = Data.load('../input/X_test_fe001.pkl')
+# top10_tr = Data.load('../input/X_train_fe004_top10.pkl')
+# top10_te = Data.load('../input/X_test_fe004_top10.pkl')
 
-train_fitting_ef_top10 = pd.concat([fe001_tr, top10_tr], axis=1)
-test_fitting_ef_top10 = pd.concat([fe001_te, top10_te], axis=1)
+# top10_tr, top10_te = standerize(top10_tr, top10_te, {'encode_col': top10_tr.columns})
+# print(top10_tr.head())
 
-fe_name = 'fe001_plus_top10'
-Data.dump(train_fitting_ef_top10, f'../input/X_train_{fe_name}.pkl')
-Data.dump(test_fitting_ef_top10, f'../input/X_test_{fe_name}.pkl')
+train_fitting_ef_add = pd.concat([fe005_tr, add_tr], axis=1)
+test_fitting_ef_add = pd.concat([fe005_te, add_te], axis=1)
+
+fe_name = 'fe005_add'
+Data.dump(train_fitting_ef_add, f'../input/X_train_{fe_name}.pkl')
+Data.dump(test_fitting_ef_add, f'../input/X_test_{fe_name}.pkl')
 
 # train_fitting_ef.to_csv('../input/train_fitting_ef.csv', index=False)
 # test_fitting_ef.to_csv('../input/test_fitting_ef.csv', index=False)
