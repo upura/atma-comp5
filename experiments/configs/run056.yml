@@ -1,0 +1,35 @@
+description: lgbm optuna
+exp_name: 'atma-comp5'
+run_name: 'run056'
+fe_name: 'fe005_top100'
+data:
+  sample_submission: '../input/atmaCup5__sample_submission.csv'
+cols_definition:
+  id_col: 'spectrum_id'
+  target_col: 'target'
+  numerical_col: [
+    'pos_x',
+    'params0',
+    'params1',
+    'params2',
+    'params3',
+    'params4',
+    'params5',
+    'params6',
+    'rms',
+    'beta'
+  ]
+  categorical_col: [
+  ]
+model_name: 'ModelOptunaLGBM'
+params: {
+  'objective': 'binary',
+  'learning_rate': 0.01,
+  "boosting": "gbdt",
+  "scale_pos_weight": 7,
+  "verbosity": -1,
+  "random_state": 42,
+  "num_boost_round": 50000,
+  "early_stopping_rounds": 100
+}
+evaluation_metric: 'prauc'
