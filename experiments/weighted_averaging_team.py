@@ -45,15 +45,15 @@ def make_submission(pred, run_name: str):
 # u++
 run_ids = [
     'run063',
+    'run064',
 ]
-run_name = 'weight003'
+run_name = 'weight004'
 
 y_train = pd.read_csv('../input/train.csv')['target']
 data = [load_from_run_id(ri) for ri in run_ids]
 
-dirname = 'result_0601_02_re'
-
 # kmat
+dirname = 'result_0601_02_re'
 preds = []
 for i in range(1, 6):
     preds.append(pd.read_pickle(f'../input/{dirname}/test_fold{i}.pickle'))
