@@ -1,0 +1,39 @@
+description: xgboost fe005 top100
+exp_name: 'atma-comp5'
+run_name: 'run068'
+fe_name: 'fe005_top100'
+data:
+  sample_submission: '../input/atmaCup5__sample_submission.csv'
+cols_definition:
+  id_col: 'spectrum_id'
+  target_col: 'target'
+  numerical_col: [
+    'pos_x',
+    'params0',
+    'params1',
+    'params2',
+    'params3',
+    'params4',
+    'params5',
+    'params6',
+    'rms',
+    'beta'
+  ]
+  categorical_col: [
+  ]
+model_name: 'ModelXGB'
+params: {
+  'objective': 'binary:logistic',
+  'eval_metric': 'logloss',
+  'max_depth': 5,
+  'learning_rate': 0.05,
+  'min_child_weight': 10,
+  'subsample': 0.8,
+  'colsample_bytree': 0.7,
+  'seed': 1337,
+  'verbosity': 0,
+  'random_state': 71,
+  'num_round': 30000,
+  'early_stopping_rounds': 50,
+}
+evaluation_metric: 'prauc'

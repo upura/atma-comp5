@@ -95,7 +95,7 @@ class Runner:
             if self.advanced['PseudoRunner']['pl_threshold']:
                 X_add = self.X_test.loc[
                     (y_test_pred < self.advanced['PseudoRunner']['pl_threshold']) | (y_test_pred > 1 - self.advanced['PseudoRunner']['pl_threshold'])]
-                y_add = pd.DataFrame(self.y_test_pred).loc[
+                y_add = pd.DataFrame(y_test_pred).loc[
                     (y_test_pred < self.advanced['PseudoRunner']['pl_threshold']) | (y_test_pred > 1 - self.advanced['PseudoRunner']['pl_threshold'])]
                 y_add = pd.DataFrame(([1 if ya > 0.5 else 0 for ya in y_add[0]]))
             else:
