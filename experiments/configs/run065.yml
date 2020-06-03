@@ -1,0 +1,31 @@
+description: CNN
+exp_name: 'atma-comp5'
+run_name: 'run065'
+fe_name: 'fe006'
+data:
+  sample_submission: '../input/atmaCup5__sample_submission.csv'
+cols_definition:
+  id_col: 'spectrum_id'
+  target_col: 'target'
+  numerical_col: [
+    'pos_x',
+    'params0',
+    'params1',
+    'params2',
+    'params3',
+    'params4',
+    'params5',
+    'params6',
+    'rms',
+    'beta'
+  ]
+  categorical_col: [
+    'exc_wl',
+  ]
+model_name: 'ModelCNNClasifier'
+params: {
+  'nb_epoch': 20,
+  'patience': 10,
+  'dropout': 0.4,
+}
+evaluation_metric: 'prauc'

@@ -30,12 +30,8 @@ def prauc(y, y_pred):
     return tf.py_func(average_precision_score, (y, y_pred), tf.double)
 
 
-def get_keras_data(df, numerical_features, categorical_features, audio_features):
-    X = {
-        "numerical": df[numerical_features].values
-    }
-    for c in categorical_features:
-        X[c] = df[c]
+def get_keras_data(df, numerical_features, audio_features):
+    X = {"numerical": df[numerical_features].values}
     X["audio"] = df[audio_features].values
     return X
 
@@ -292,7 +288,7 @@ class ModelCNNClasifier(oriModel):
         audio_features = [c for c in tr_x.columns if "spec" in c]
 
         # データのセット・スケーリング
-        numerical_features = [c for c in tr_x.columns if (c not in self.categorical_features) and (c not in audio_features)]
+        numerical_features = [c for c in tr_x.columns if (c not in audio_features)]
         validation = va_x is not None
 
         # パラメータ
@@ -301,19 +297,6 @@ class ModelCNNClasifier(oriModel):
         patience = self.params['patience']
 
         # モデルの構築
-        inp_cats = []
-        embs = []
-        data = pd.concat([tr_x, va_x, te_x]).reset_index(drop=True)
-
-        for c in self.categorical_features:
-            inp_cat = Input(shape=[1], name=c)
-            inp_cats.append(inp_cat)
-            embs.append((Embedding(data[c].max() + 1, 4)(inp_cat)))
-        cats = Flatten()(concatenate(embs))
-        cats = Dense(10, activation="linear")(cats)
-        cats = BatchNormalization()(cats)
-        cats = PReLU()(cats)
-
         inp_numerical = Input(shape=[len(numerical_features)], name="numerical")
         nums = Dense(32, activation="linear")(inp_numerical)
         nums = BatchNormalization()(nums)
@@ -323,34 +306,34 @@ class ModelCNNClasifier(oriModel):
         # https://www.kaggle.com/yuval6967/3rd-place-cnn
         inp_audio = Input(shape=[512], name="audio")
         audio = Reshape((512, 1))(inp_audio)
-        audio = Conv1D(256, 8, padding='same', name='Conv1')(audio)
+        audio = Conv1D(256, 32, padding='same', name='Conv1')(audio)
         audio = BatchNormalization()(audio)
         audio = LeakyReLU(alpha=0.1)(audio)
         audio = Dropout(0.2)(audio)
-        audio = Conv1D(256, 5, padding='same', name='Conv2')(audio)
+        audio = Conv1D(256, 24, padding='same', name='Conv2')(audio)
         audio = BatchNormalization()(audio)
         audio = LeakyReLU(alpha=0.1)(audio)
         audio = Dropout(0.2)(audio)
-        audio = Conv1D(256, 3, padding='same', name='Conv3')(audio)
+        audio = Conv1D(128, 16, padding='same', name='Conv3')(audio)
         audio = BatchNormalization()(audio)
         audio = LeakyReLU(alpha=0.1)(audio)
         audio = GlobalMaxPool1D()(audio)
         audio = Dropout(dropout)(audio)
 
-        x = concatenate([nums, cats, audio])
+        x = concatenate([nums, audio])
         x = BatchNormalization()(x)
         x = Dropout(dropout / 2)(x)
         out = Dense(1, activation="sigmoid", name="out1")(x)
 
-        model = kerasModel(inputs=inp_cats + [inp_numerical] + [inp_audio], outputs=out)
+        model = kerasModel(inputs=[inp_numerical] + [inp_audio], outputs=out)
         model.compile(loss='binary_crossentropy', optimizer='adam', metrics=[prauc])
 
         # print(model.summary())
         n_train = len(tr_x)
-        batch_size_nn = 256
+        batch_size_nn = 512
 
-        tr_x = get_keras_data(tr_x, numerical_features, self.categorical_features, audio_features)
-        va_x = get_keras_data(va_x, numerical_features, self.categorical_features, audio_features)
+        tr_x = get_keras_data(tr_x, numerical_features, audio_features)
+        va_x = get_keras_data(va_x, numerical_features, audio_features)
 
         clr_tri = CyclicLR(base_lr=1e-5, max_lr=1e-2, step_size=n_train // batch_size_nn, mode="triangular2")
         ckpt = ModelCheckpoint(f'../output/model/model_{self.run_fold_name}.hdf5', save_best_only=True,
@@ -369,8 +352,8 @@ class ModelCNNClasifier(oriModel):
 
     def predict(self, te_x):
         audio_features = [c for c in te_x.columns if "spec" in c]
-        numerical_features = [c for c in te_x.columns if (c not in self.categorical_features) and (c not in audio_features)]
-        te_x = get_keras_data(te_x, numerical_features, self.categorical_features, audio_features)
+        numerical_features = [c for c in te_x.columns if (c not in audio_features)]
+        te_x = get_keras_data(te_x, numerical_features, audio_features)
         pred = self.model.predict(te_x).reshape(-1, )
         return pred
 
