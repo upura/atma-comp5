@@ -1,0 +1,46 @@
+description: lgbm fe005 top100
+exp_name: 'atma-comp5'
+run_name: 'run070'
+fe_name: 'fe005_top100'
+data:
+  sample_submission: '../input/atmaCup5__sample_submission.csv'
+cols_definition:
+  id_col: 'spectrum_id'
+  target_col: 'target'
+  numerical_col: [
+    'pos_x',
+    'params0',
+    'params1',
+    'params2',
+    'params3',
+    'params4',
+    'params5',
+    'params6',
+    'rms',
+    'beta'
+  ]
+  categorical_col: [
+  ]
+model_name: 'ModelLGBM'
+params: {
+  "feature_fraction": 0.44800000000000006,
+  "num_leaves": 11,
+  "bagging_fraction": 0.6720928038521492,
+  "bagging_freq": 1,
+  "lambda_l1": 0.008045912250217658,
+  "lambda_l2": 1.3140583054162267e-08,
+  "min_child_samples": 10,
+  "objective": "binary",
+  "learning_rate": 0.01,
+  "boosting": "dart",
+  "scale_pos_weight": 7,
+  "verbosity": -1,
+  "random_state": 42,
+  "num_boost_round": 5000,
+  "early_stopping_rounds": 100
+}
+evaluation_metric: 'prauc'
+advanced:
+  PseudoRunner:
+    y_test_pred: '../output/pred/run064-test.pkl'
+    pl_threshold: 0.5
