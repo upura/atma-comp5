@@ -47,8 +47,10 @@ run_ids = [
     'run070',
     'run067',
     'run066',
+    'run064',
+    'run063',
 ]
-run_name = 'weight006'
+run_name = 'weight007'
 
 y_train = pd.read_csv('../input/train.csv')['target']
 data = [load_from_run_id(ri) for ri in run_ids]
