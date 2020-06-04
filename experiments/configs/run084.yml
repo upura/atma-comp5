@@ -1,0 +1,40 @@
+description: catboost fe005 top100 cnn
+exp_name: 'atma-comp5'
+run_name: 'run084'
+fe_name: 'fe005_top100_cnn'
+data:
+  sample_submission: '../input/atmaCup5__sample_submission.csv'
+cols_definition:
+  id_col: 'spectrum_id'
+  target_col: 'target'
+  numerical_col: [
+    'pos_x',
+    'params0',
+    'params1',
+    'params2',
+    'params3',
+    'params4',
+    'params5',
+    'params6',
+    'rms',
+    'beta'
+  ]
+  categorical_col: [
+  ]
+model_name: 'ModelCatClassifier'
+params: {
+  'depth': 6,
+  'learning_rate': 0.04,
+  'iterations': 10000,
+  'loss_function': 'Logloss',
+  'eval_metric': 'Logloss',
+  'random_seed': 777,
+  'allow_writing_files': False,
+  'task_type': "CPU",
+  'early_stopping_rounds': 50
+}
+evaluation_metric: 'prauc'
+advanced:
+  PseudoRunner:
+    y_test_pred: '../output/pred/run064-test.pkl'
+    pl_threshold: 0.5
