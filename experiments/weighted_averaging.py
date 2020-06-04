@@ -1,16 +1,20 @@
 import pandas as pd
 from scipy.optimize import minimize
+from scipy.stats import rankdata
 from sklearn.metrics import average_precision_score
 
 from ayniy.utils import Data
 
 
-def load_from_run_id(run_id):
+def load_from_run_id(run_id: str, to_rank: False):
     oof = Data.load(f'../output/pred/{run_id}-train.pkl')
     pred = Data.load(f'../output/pred/{run_id}-test.pkl')
     if run_id in ('run015'):
         oof = oof.reshape(-1, )
         pred = pred.reshape(-1, )
+    if to_rank:
+        oof = rankdata(oof) / len(oof)
+        pred = rankdata(pred) / len(pred)
     return (oof, pred)
 
 
@@ -45,10 +49,10 @@ run_ids = [
     'run082',
     'run084',
 ]
-run_name = 'weight013'
+run_name = 'weight014'
 
 y_train = pd.read_csv('../input/train.csv')['target']
-data = [load_from_run_id(ri) for ri in run_ids]
+data = [load_from_run_id(ri, to_rank=True) for ri in run_ids]
 
 for d in data:
     print(average_precision_score(y_train, d[0]))
