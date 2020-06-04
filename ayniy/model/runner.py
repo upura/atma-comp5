@@ -92,11 +92,17 @@ class Runner:
         # Pseudo Lebeling
         if self.advanced and 'PseudoRunner' in self.advanced:
             y_test_pred = Data.load(self.advanced['PseudoRunner']['y_test_pred'])
-            if self.advanced['PseudoRunner']['pl_threshold']:
+            if 'pl_threshold' in self.advanced['PseudoRunner']:
                 X_add = self.X_test.loc[
                     (y_test_pred < self.advanced['PseudoRunner']['pl_threshold']) | (y_test_pred > 1 - self.advanced['PseudoRunner']['pl_threshold'])]
                 y_add = pd.DataFrame(y_test_pred).loc[
                     (y_test_pred < self.advanced['PseudoRunner']['pl_threshold']) | (y_test_pred > 1 - self.advanced['PseudoRunner']['pl_threshold'])]
+                y_add = pd.DataFrame(([1 if ya > 0.5 else 0 for ya in y_add[0]]))
+            elif 'pl_threshold_neg' in self.advanced['PseudoRunner']:
+                X_add = self.X_test.loc[
+                    (y_test_pred < self.advanced['PseudoRunner']['pl_threshold_neg']) | (y_test_pred > self.advanced['PseudoRunner']['pl_threshold_pos'])]
+                y_add = pd.DataFrame(y_test_pred).loc[
+                    (y_test_pred < self.advanced['PseudoRunner']['pl_threshold_neg']) | (y_test_pred > self.advanced['PseudoRunner']['pl_threshold_pos'])]
                 y_add = pd.DataFrame(([1 if ya > 0.5 else 0 for ya in y_add[0]]))
             else:
                 X_add = self.X_test
