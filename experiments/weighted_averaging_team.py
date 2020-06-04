@@ -1,18 +1,22 @@
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
+from scipy.stats import rankdata
 from sklearn.metrics import average_precision_score
 from sklearn.model_selection import StratifiedKFold
 
 from ayniy.utils import Data
 
 
-def load_from_run_id(run_id):
+def load_from_run_id(run_id: str, to_rank: False):
     oof = Data.load(f'../output/pred/{run_id}-train.pkl')
     pred = Data.load(f'../output/pred/{run_id}-test.pkl')
     if run_id in ('run015'):
         oof = oof.reshape(-1, )
         pred = pred.reshape(-1, )
+    if to_rank:
+        oof = rankdata(oof) / len(oof)
+        pred = rankdata(pred) / len(pred)
     return (oof, pred)
 
 
@@ -45,17 +49,14 @@ def make_submission(pred, run_name: str):
 
 # u++
 run_ids = [
-    'run081',
-    # 'run067',
-    # 'run066',
-    # 'run064',
-    # 'run063',
+    'run082',
+    'run084',
 ]
-run_name = 'weight011'
+run_name = 'weight015'
 
 train = pd.read_csv('../input/train.csv')
 y_train = train['target']
-data = [load_from_run_id(ri) for ri in run_ids]
+data = [load_from_run_id(ri, to_rank=True) for ri in run_ids]
 
 # kmat
 dirname = 'result_0603_01_upf0'
