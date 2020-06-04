@@ -42,11 +42,10 @@ def make_submission(pred, run_name: str):
 
 
 run_ids = [
-    'run015',
-    'run035',
-    'run036',
+    'run081',
+    'run082',
 ]
-run_name = 'weight002'
+run_name = 'weight012'
 
 y_train = pd.read_csv('../input/train.csv')['target']
 data = [load_from_run_id(ri) for ri in run_ids]
