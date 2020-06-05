@@ -7,28 +7,28 @@ from ayniy.utils import Data
 
 def load_oof_from_run_id(run_id: str):
     oof = Data.load(f'../output/pred/{run_id}-train.pkl')
-    if run_id in ('run013', 'run014', 'run015'):
+    if run_id in ('run091', 'run092', 'run097'):
         oof = oof.reshape(-1, )
     return oof
 
 
 def load_pred_from_run_id(run_id: str):
     pred = Data.load(f'../output/pred/{run_id}-test.pkl')
-    if run_id in ('run013', 'run014', 'run015'):
+    if run_id in ('run091', 'run092', 'run097'):
         pred = pred.reshape(-1, )
     return pred
 
 
 run_ids = [
-    'run090',
-    'run089',
-    'run087',
-    'run086',
-    'run084',
-    'run082',
-    'run081',
+    'run100',
+    'run099',
+    'run098',
+    'run097',
+    'run093',
+    'run092',
+    'run091',
 ]
-fe_name = 'stack011'
+fe_name = 'stack012'
 
 y_train = pd.read_csv('../input/train.csv')['target']
 oofs = [load_oof_from_run_id(ri) for ri in run_ids]
