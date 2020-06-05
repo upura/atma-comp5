@@ -21,65 +21,15 @@ def load_pred_from_run_id(run_id: str):
 
 
 run_ids = [
-    'run070',
-    'run069',
-    'run068',
-    'run067',
-    'run066',
-    'run062',
-    'run062',
-    'run061',
-    'run060',
-    'run059',
-    'run058',
-    'run057',
-    'run056',
-    'run055',
-    'run054',
-    'run053',
-    'run052',
-    'run051',
-    'run050',
-    'run049',
-    'run048',
-    'run048',
-    'run048',
-    'run047',
-    'run046',
-    'run045',
-    'run043',
-    'run042',
-    'run041',
-    'run040',
-    'run022',
-    'run039',
-    'run036',
-    'run035',
-    'run029',
-    'run028',
-    'run027',
-    'run026',
-    'run025',
-    'run024',
-    'run023',
-    'run022',
-    'run021',
-    'run020',
-    'run019',
-    'run018',
-    'run017',
-    'run016',
-    'run015',
-    'run014',
-    'run013',
-    'run012',
-    'run011',
-    'run010',
-    'run009',
-    'run008',
-    'run001',
+    'run090',
+    'run089',
+    'run087',
+    'run086',
+    'run084',
+    'run082',
+    'run081',
 ]
-fe_name = 'stack008'
+fe_name = 'stack010'
 
 train = pd.read_csv('../input/train.csv')
 y_train = train['target']
@@ -101,9 +51,9 @@ cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=7)
 train['oof'] = np.nan
 for i, (tr_idx, val_idx) in enumerate(cv.split(train, train['target'])):
     train.loc[val_idx, 'oof'] = kmat_oofs[i]
-    print(average_precision_score(
-        train.loc[val_idx, 'target'],
-        train.loc[val_idx, 'oof']))
+    # print(average_precision_score(
+    #     train.loc[val_idx, 'target'],
+    #     train.loc[val_idx, 'oof']))
 
 preds.append(kmat_pred)
 oofs.append(train['oof'])
