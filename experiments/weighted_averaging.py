@@ -50,12 +50,11 @@ def make_submission(pred, run_name: str):
 run_ids = [
     'run082',
     'run084',
-    'run102',
 ]
-run_name = 'weight019'
+run_name = 'weight020'
 
 y_train = pd.read_csv('../input/train.csv')['target']
-data = [load_from_run_id(ri, to_rank=True) for ri in run_ids]
+data = [load_from_run_id(ri, to_rank=False) for ri in run_ids]
 
 for d in data:
     print(average_precision_score(y_train, d[0]))
