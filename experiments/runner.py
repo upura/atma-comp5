@@ -17,7 +17,7 @@ parser.add_argument('--fe')
 parser.add_argument('--run')
 args = parser.parse_args()
 
-cv = StratifiedKFold(n_splits=3, shuffle=True, random_state=7)
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=7)
 # cv = GroupKFold(n_splits=6)
 
 if args.fe:
