@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
-from scipy.stats import rankdata
 from sklearn.metrics import average_precision_score
 from sklearn.model_selection import StratifiedKFold
 
@@ -37,10 +36,6 @@ def make_submission(pred, run_name: str):
     sub.to_csv(f'../output/submissions/submission_{run_name}.csv', index=False)
 
 
-# u++
-run_ids = [
-    'weight016',
-]
 run_name = 'weight018'
 
 train = pd.read_csv('../input/train.csv')
@@ -62,13 +57,11 @@ for dirname in dirnames:
         kmat_preds.append(pd.read_pickle(f'../input/kmat/{dirname}/test_fold{i}.pickle'))
         kmat_oofs.append(pd.read_pickle(f'../input/kmat/{dirname}/val_fold{i}.pickle'))
     kmat_pred = np.mean(kmat_preds, axis=0)
-
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=7)
     train['oof'] = np.nan
     for i, (tr_idx, val_idx) in enumerate(cv.split(train, train['target'])):
         train.loc[val_idx, 'oof'] = kmat_oofs[i]
-
-    data.append((train['oof'].values, kmat_pred))
+    data.append((train['oof'].copy().values, kmat_pred))
 
 # print cv score
 for d in data:
