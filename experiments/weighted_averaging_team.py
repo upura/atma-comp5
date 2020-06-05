@@ -28,6 +28,7 @@ def f(x):
         else:
             pred += d[0] * (1 - sum(x))
     score = -1 * average_precision_score(y_train, pred)
+    Data.dump(pred, f'../output/pred/{run_name}-train.pkl')
     return score
 
 
@@ -38,6 +39,7 @@ def make_predictions(data: list, weights: list):
             pred += d[1] * weights[i]
         else:
             pred += d[1] * (1 - sum(weights))
+    Data.dump(pred, f'../output/pred/{run_name}-test.pkl')
     return pred
 
 
@@ -49,10 +51,9 @@ def make_submission(pred, run_name: str):
 
 # u++
 run_ids = [
-    'run082',
-    'run084',
+    'weight016',
 ]
-run_name = 'weight015'
+run_name = 'weight017'
 
 train = pd.read_csv('../input/train.csv')
 y_train = train['target']
