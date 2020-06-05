@@ -28,7 +28,6 @@ def f(x):
         else:
             pred += d[0] * (1 - sum(x))
     score = -1 * average_precision_score(y_train, pred)
-    Data.dump(pred, f'../output/pred/{run_name}-train.pkl')
     return score
 
 
