@@ -48,10 +48,11 @@ def make_submission(pred, run_name: str):
 
 
 run_ids = [
-    'run084',
     'run082',
+    'run084',
+    'run102',
 ]
-run_name = 'weight016'
+run_name = 'weight019'
 
 y_train = pd.read_csv('../input/train.csv')['target']
 data = [load_from_run_id(ri, to_rank=True) for ri in run_ids]
