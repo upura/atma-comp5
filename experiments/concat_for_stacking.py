@@ -1,21 +1,26 @@
 import numpy as np
 import pandas as pd
+from scipy.stats import rankdata
 from sklearn.metrics import average_precision_score
 
 from ayniy.utils import Data
 
 
-def load_oof_from_run_id(run_id: str):
+def load_oof_from_run_id(run_id: str, to_rank: False):
     oof = Data.load(f'../output/pred/{run_id}-train.pkl')
     if run_id in ('run091', 'run092', 'run097'):
         oof = oof.reshape(-1, )
+    if to_rank:
+        oof = rankdata(oof) / len(oof)
     return oof
 
 
-def load_pred_from_run_id(run_id: str):
+def load_pred_from_run_id(run_id: str, to_rank: False):
     pred = Data.load(f'../output/pred/{run_id}-test.pkl')
     if run_id in ('run091', 'run092', 'run097'):
         pred = pred.reshape(-1, )
+    if to_rank:
+        pred = rankdata(pred) / len(pred)
     return pred
 
 
@@ -29,11 +34,11 @@ run_ids = [
     'run082',
     'run081',
 ]
-fe_name = 'stack013'
+fe_name = 'stack014'
 
 y_train = pd.read_csv('../input/train.csv')['target']
-oofs = [load_oof_from_run_id(ri) for ri in run_ids]
-preds = [load_pred_from_run_id(ri) for ri in run_ids]
+oofs = [load_oof_from_run_id(ri, to_rank=True) for ri in run_ids]
+preds = [load_pred_from_run_id(ri, to_rank=True) for ri in run_ids]
 
 for oof in oofs:
     print(average_precision_score(y_train, oof))
