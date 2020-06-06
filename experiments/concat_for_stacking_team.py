@@ -51,7 +51,6 @@ run_ids = [
     'run042',
     'run041',
     'run040',
-    'run022',
     'run039',
     'run036',
     'run035',
@@ -79,7 +78,7 @@ run_ids = [
     'run008',
     'run001',
 ]
-fe_name = 'stack015'
+fe_name = 'stack016'
 
 train = pd.read_csv('../input/train.csv')
 y_train = train['target']
