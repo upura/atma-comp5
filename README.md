@@ -1,44 +1,72 @@
 # atmaCup #5
 
-## Feature Engineering
+[**Documentation**](https://upura.github.io/ayniy-docs/) | [**Slide (Japanese)**](https://speakerdeck.com/upura/introduction-ayniy)
 
-- label_encoding
-- frequency encoding
-- count encoding
-- count encoding interact
-- matrix factorization
-- aggregation
-- numeric interact
-- tsfresh
-- target encoding
+```python
+# Import packages
+import yaml
+from sklearn.model_selection import StratifiedKFold
+from ayniy.preprocessing.runner import Tabular
+from ayniy.model.runner import Runner
 
-Then, 200 features are selected by lgbm importance.
+# Load configs
+f = open('configs/fe000.yml', 'r+')
+fe_configs = yaml.load(f)
+g = open('configs/run000.yml', 'r+')
+run_configs = yaml.load(g)
 
-## Validation Strategy
+# Difine CV strategy as you like
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=7)
 
-GroupKFold does't work because a fold has few positive data. 
+# Feature engineering
+tabular = Tabular(fe_configs, cv)
+tabular.create()
 
-- 5 StratifiedKFold
-- 6 GroupKFold
+# Modeling
+runner = Runner(run_configs, cv)
+runner.run_train_cv()
+runner.run_predict_cv()
+runner.submission()
+```
 
-## Model
+## Environment
 
-### GBDT
+```bash
+docker-compose build
+docker-compose up
+```
 
-- LightGBM
-- CatBoost
-- XGBoost
+## MLflow
 
-Logloss works better than PR-AUC as a eval metric
+```bash
+cd experiments
+mlflow ui
+```
 
-### NN
+## Test
 
-- CNN
-    - [Kaggle "PLAsTiCC Astronomical Classification" 3rd place](https://www.kaggle.com/yuval6967/3rd-place-cnn)
-- RNN
-    - [Kaggle "PLAsTiCC Astronomical Classification" 2nd place](https://www.kaggle.com/zerrxy/plasticc-rnn)
+```bash
+docker-compose build
+docker-compose up -d
+docker exec -it ayniy-test bash
+```
+``` 
+pytest tests/ --cov=. --cov-report=html
+```
 
-## Ensemble
+## Docs
 
-- Weighted averaging
-- Stacking
+```bash
+docker-compose build
+docker-compose up -d
+docker exec -it ayniy-test bash
+cd docs
+make html
+```
+```bash
+cd docs/build/html
+git a .
+git c "update"
+git push origin master
+```
+https://github.com/upura/ayniy-docs
