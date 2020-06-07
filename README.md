@@ -4,7 +4,7 @@
 - 取り組みについては、[ブログ](https://upura.hatenablog.com/entry/2020/06/06/193944)や[approach.md](approach.md)をご覧ください。
 - 自作コンペ用ライブラリ「Ayniy」を利用しています。
 
-[**Documentation**](https://upura.github.io/ayniy-docs/) | [**GitHub**](https://github.com/upura/ayniy) | [**Slide (Japanese)**](https://speakerdeck.com/upura/introduction-ayniy)
+[**Documentation**](https://upura.github.io/ayniy-docs/) | [**GitHub**](https://github.com/upura/ayniy) | [**Slide (Japanese)**](https://speakerdeck.com/upura/ayniy-with-mlflow)
 
 ```python
 # Import packages
