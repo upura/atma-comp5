@@ -1,6 +1,10 @@
 # atmaCup #5
 
-[**Documentation**](https://upura.github.io/ayniy-docs/) | [**Slide (Japanese)**](https://speakerdeck.com/upura/introduction-ayniy)
+- [atmaCup #5](https://atma.connpass.com/event/175139/)のソースコード。最終順位はpublic 16位->private 27位。
+- 取り組みについては、[ブログ](https://upura.hatenablog.com/entry/2020/06/06/193944)や[approach.md](approach.md)をご覧ください。
+- 自作コンペ用ライブラリ「Ayniy」を利用しています。
+
+[**Documentation**](https://upura.github.io/ayniy-docs/) | [**GitHub**](https://github.com/upura/ayniy) | [**Slide (Japanese)**](https://speakerdeck.com/upura/introduction-ayniy)
 
 ```python
 # Import packages
