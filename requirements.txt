@@ -7,7 +7,7 @@ kaggler
 mecab-python3
 mlflow
 neologdn
-numpy==1.16.4
+numpy==1.22.0
 optuna==0.18.0
 pytest>=3.6
 pytest-remotedata>=0.3.1
