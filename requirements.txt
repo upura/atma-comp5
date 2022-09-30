@@ -2,7 +2,7 @@ git+https://github.com/stanfordmlgroup/ngboost.git
 fastprogress
 ginza
 japanize-matplotlib
-joblib==0.13.2
+joblib==1.2.0
 kaggler
 mecab-python3
 mlflow
