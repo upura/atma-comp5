@@ -13,5 +13,5 @@ pytest>=3.6
 pytest-remotedata>=0.3.1
 scikit-learn==0.20.3
 scipy==1.1.0
-transformers==2.5.1
+transformers==4.30.0
 paramiko
